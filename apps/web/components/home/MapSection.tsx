@@ -61,8 +61,8 @@ export default function MapSection() {
 
         {/* 12-column split at xl (stats · map · recent passes), a single stack below it —
             the map needs the full column width to stay readable on narrow screens. */}
-        <div className="mt-12 grid gap-6 xl:grid-cols-12 xl:items-center xl:gap-8">
-          <div className="grid gap-4 sm:grid-cols-3 xl:col-span-3 xl:grid-cols-1">
+        <div className="mt-12 grid gap-6 xl:grid-cols-[286px_minmax(0,1fr)_287px] xl:items-center xl:gap-3.5">
+          <div className="grid gap-5 sm:grid-cols-3 xl:grid-cols-1">
             {stats.map(({ icon: Icon, value, label, tint }) => (
               <article
                 key={label}
@@ -90,11 +90,11 @@ export default function MapSection() {
             ))}
           </div>
 
-          <div className="xl:col-span-6">
+          <div>
             <UsActivityMap />
           </div>
 
-          <div className="xl:col-span-3">
+          <div>
             <RecentPasses />
           </div>
         </div>

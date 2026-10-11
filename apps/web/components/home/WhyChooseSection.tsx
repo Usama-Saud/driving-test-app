@@ -110,15 +110,19 @@ export default function WhyChooseSection() {
       aria-labelledby="choose-license-type"
       className="relative overflow-hidden py-16 lg:py-[120px]"
     >
-      <div
+      <Image
+        src="/license-types/section-bg.png"
+        alt=""
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-linear-to-b from-[#e6f0ff] via-[#f4f8ff] to-background dark:from-blue-500/10 dark:via-blue-500/5 dark:to-transparent"
+        fill
+        sizes="100vw"
+        className="pointer-events-none absolute inset-0 object-cover object-top select-none"
       />
 
       {/* Wider than the page's usual max-w-container (1360px): at that width each card is ~426px
           and the bullets can't fit on one line without running across the vehicle in the card
           art. 1600px puts the cards near the ~566px the design was drawn at. */}
-      <div className="relative mx-auto max-w-[1600px] px-5">
+      <div className="relative mx-auto max-w-container px-5">
         <div className="flex flex-col items-center gap-4 text-center">
           <span className="inline-flex items-center gap-2 rounded-full bg-blue-100/70 px-4 py-2 text-xs font-bold tracking-[1.2px] text-blue-700 uppercase dark:bg-blue-500/15 dark:text-blue-300">
             <span className="grid size-5 shrink-0 place-items-center rounded-md bg-blue-600 text-white">
@@ -148,7 +152,7 @@ export default function WhyChooseSection() {
             <article
               key={card.vehicle}
               style={{ backgroundColor: card.tint }}
-              className="relative flex min-h-[22rem] flex-col overflow-hidden rounded-3xl p-6 shadow-card sm:min-h-96 sm:p-8 lg:min-h-80"
+              className="relative flex min-h-[20rem] flex-col overflow-hidden rounded-3xl p-6 shadow-card sm:min-h-[22rem] lg:h-[292px] lg:min-h-0"
             >
               {}
               <Image
@@ -161,7 +165,7 @@ export default function WhyChooseSection() {
               />
 
               {}
-              <div className="relative flex flex-1 flex-col gap-6">
+              <div className="relative flex flex-1 flex-col gap-4">
                 <div className="flex items-center gap-4">
                   <Image
                     src={card.icon.src}
@@ -170,16 +174,16 @@ export default function WhyChooseSection() {
                     sizes="56px"
                     alt=""
                     aria-hidden
-                    className="size-14 shrink-0 rounded-xl object-contain"
+                    className="size-15 shrink-0 rounded-xl object-contain"
                   />
                   {}
-                  <h3 className="font-sora text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+                  <h3 className="font-sora text-[32px] leading-none font-bold tracking-tight text-neutral-900 sm:text-[40px]">
                     {card.title}
                   </h3>
                 </div>
 
                 {}
-                <ul className="flex flex-col gap-3 lg:max-w-[72%]">
+                <ul className="flex flex-col gap-3 lg:max-w-[62%]">
                   {card.points.map((point) => (
                     <li key={point} className="flex items-start gap-2.5">
                       <span
@@ -187,14 +191,14 @@ export default function WhyChooseSection() {
                       >
                         <Check className="size-3.5 stroke-3 text-white" />
                       </span>
-                      <span className="text-sm leading-6 text-neutral-700">
+                      <span className="text-sm leading-5 text-neutral-700">
                         {point}
                       </span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="mt-auto pb-24 sm:pb-12 lg:pb-6">
+                <div className="mt-auto pb-10 sm:pb-6 lg:pb-0">
                   <Button
                     href={hrefFor(card)}
                     onClick={() => onCtaClick(card)}
@@ -202,7 +206,7 @@ export default function WhyChooseSection() {
                     icon={ArrowRight}
                     iconPosition="right"
                     size="sm"
-                    className="px-5 py-2.5"
+                    className="h-13 px-6"
                   />
                 </div>
               </div>
