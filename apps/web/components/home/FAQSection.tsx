@@ -97,7 +97,7 @@ export default function FAQSection({ className }: { className?: string }) {
 
   return (
     <section className={cn("bg-background px-5 py-16 lg:py-[120px]", className)}>
-      <div className="mx-auto grid max-w-container grid-cols-1 gap-10 lg:grid-cols-[482fr_785fr] lg:items-start lg:gap-[60px]">
+      <div className="mx-auto grid max-w-container grid-cols-1 gap-10 lg:grid-cols-[482fr_785fr] lg:items-start lg:gap-[93px]">
         {/* Left — heading + category tabs */}
         <div className="flex flex-col gap-8">
           <div className="flex flex-col items-start gap-8">

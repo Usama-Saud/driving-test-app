@@ -93,7 +93,7 @@ export default function RecentPasses() {
 
           return (
             <li key={`${pass.name}-${pass.state}`}>
-              <div className="flex items-center gap-3 px-2 py-3">
+              <div className="flex h-[73px] items-center gap-3 px-2">
                 <span
                   aria-hidden
                   className={`grid size-10 shrink-0 place-items-center rounded-full text-sm font-semibold ${pass.tint}`}
