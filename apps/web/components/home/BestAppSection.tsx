@@ -2,6 +2,7 @@ import { Check, X } from "lucide-react";
 import Image from "next/image";
 import Heading from "@/components/ui/Heading";
 import Paragraph from "@/components/ui/Paragraph";
+import TabletVideo from "@/components/home/TabletVideo";
 
 
 const PROS = [
@@ -35,32 +36,14 @@ function Stat({ value, color }: { value: string; color: string }) {
 
 export default function BestAppSection() {
   return (
-    <section
-      className="relative z-10 px-5 pb-16 lg:pb-0"
-      style={{
-        backgroundImage:
-          "linear-gradient(to bottom, #fcfbfa 0px, var(--background) 240px)",
-      }}
-    >
-      <div className="mx-auto max-w-container">
-       
-        <div className="mt-8 flex justify-center lg:mt-12">
-          <div className="w-full max-w-[980px] overflow-hidden rounded-[2.5rem] bg-black">
-            <video
-              src="/bestapp/ipad-quiz.mp4"
-              poster="/bestapp/ipad-cut.png"
-              autoPlay
-              muted
-              loop
-              playsInline
-              aria-label="A DriveLane practice question shown on an iPad"
-              className="h-auto w-full rounded-[5rem]"
-            />
-          </div>
-        </div>
+    <section className="relative z-10 bg-background pb-16 lg:pb-0">
+      <div className="bg-[linear-gradient(to_bottom,#fff_47.3%,var(--background)_47.3%)] px-5">
+        <TabletVideo className="mx-auto h-auto w-full max-w-[810px] [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent),linear-gradient(to_bottom,transparent,black_3.5%,black_95%,transparent)] [mask-composite:intersect]" />
+      </div>
 
+      <div className="mx-auto max-w-container px-5">
         {/* Heading */}
-        <div className="mt-6 flex flex-col items-center gap-4 text-center">
+        <div className="mt-10 flex flex-col items-center gap-4 text-center lg:mt-16">
           <Heading as="h2" className="text-center">
             The best Driver&rsquo;s Ed App in USA
           </Heading>

@@ -18,7 +18,7 @@ export default function AuthSplitLayout({
 
   return (
     <div className="flex min-h-svh flex-col bg-white lg:landscape:grid lg:landscape:grid-cols-[45fr_55fr] 2xl:grid-cols-2 dark:bg-neutral-900">
-      <div className="relative max-h-64 min-h-24 flex-1 overflow-hidden sm:max-h-80 md:max-h-[26rem] lg:landscape:sticky lg:landscape:top-0 lg:landscape:h-svh lg:landscape:max-h-none">
+      <div className="relative min-h-24 flex-1 overflow-hidden lg:landscape:sticky lg:landscape:top-0 lg:landscape:h-svh">
         <Image
           src="/vehicles/login-page-car.png"
           alt="Car driving along a coastal mountain road"
