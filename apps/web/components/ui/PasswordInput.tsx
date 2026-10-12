@@ -6,9 +6,15 @@ import { Input } from "./Input";
 
 export default function PasswordInput({
   className = "",
+  toggleClassName = "",
+  iconClassName = "size-4",
   ref,
   ...props
-}: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) {
+}: InputHTMLAttributes<HTMLInputElement> & {
+  ref?: Ref<HTMLInputElement>;
+  toggleClassName?: string;
+  iconClassName?: string;
+}) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -17,11 +23,11 @@ export default function PasswordInput({
       <button
         type="button"
         onClick={() => setShowPassword((v) => !v)}
-        className="text-muted-foreground hover:text-foreground focus-visible:ring-ring absolute inset-y-0 right-0 flex items-center rounded-r-md px-3 focus-visible:ring-[3px] focus-visible:outline-none"
+        className={`text-muted-foreground hover:text-foreground focus-visible:ring-ring absolute inset-y-0 right-0 flex items-center rounded-r-md px-3 focus-visible:ring-[3px] focus-visible:outline-none ${toggleClassName}`}
         aria-label={showPassword ? "Hide password" : "Show password"}
         tabIndex={-1}
       >
-        {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+        {showPassword ? <EyeOff className={iconClassName} /> : <Eye className={iconClassName} />}
       </button>
     </div>
   );
