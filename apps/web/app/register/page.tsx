@@ -1,22 +1,18 @@
 "use client";
 
-import { ArrowRight, LockKeyhole, Mail, UserRound } from "lucide-react";
+import { LockKeyhole, Mail, UserRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
-import AuthSplitLayout, {
+import {
+  AuthField,
   AuthFooter,
-  authFieldIconClass,
-  authInputClass,
-  authLabelClass,
+  AuthInput,
   authLinkClass,
-  authSubmitClass,
-} from "@/components/auth/AuthSplitLayout";
-import { Input } from "@/components/ui/Input";
-import InputError from "@/components/ui/InputError";
-import { Label } from "@/components/ui/Label";
-import PasswordInput from "@/components/ui/PasswordInput";
-import Spinner from "@/components/ui/Spinner";
+  AuthPasswordInput,
+  AuthSubmitButton,
+} from "@/components/auth/AuthFormParts";
+import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
 import { ApiError, useAuth } from "@/lib/auth-context";
 
 function RegisterPageInner() {
@@ -53,113 +49,92 @@ function RegisterPageInner() {
     }
   }
 
+  const loginHref = redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login";
+
   return (
     <AuthSplitLayout
       title="Create an account"
       headline={["Let’s get you", "ready for the"]}
       highlight="road."
     >
-      <form className="mt-5 sm:mt-7 xl:mt-10" onSubmit={submit}>
-        <div className="grid gap-2 sm:gap-2.5">
-          <Label htmlFor="name" className={authLabelClass}>
-            Name
-          </Label>
-          <div className="relative">
-            <UserRound aria-hidden="true" strokeWidth={1.75} className={authFieldIconClass} />
-            <Input
-              id="name"
-              type="text"
-              required
-              autoFocus
-              tabIndex={1}
-              autoComplete="name"
-              placeholder="Your full name"
-              className={authInputClass}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <InputError message={errors.name?.[0]} />
-        </div>
+      <form className="mt-3 sm:mt-7 xl:mt-10" onSubmit={submit}>
+        <AuthField
+          id="name"
+          label="Name"
+          icon={UserRound}
+          error={errors.name?.[0]}
+          className="gap-1 sm:gap-2"
+        >
+          <AuthInput
+            id="name"
+            type="text"
+            required
+            autoFocus
+            autoComplete="name"
+            placeholder="Your full name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </AuthField>
 
-        <div className="mt-4 grid gap-2 sm:mt-5 sm:gap-2.5">
-          <Label htmlFor="email" className={authLabelClass}>
-            Email address
-          </Label>
-          <div className="relative">
-            <Mail aria-hidden="true" strokeWidth={1.75} className={authFieldIconClass} />
-            <Input
-              id="email"
-              type="email"
-              required
-              tabIndex={2}
-              autoComplete="email"
-              placeholder="you@example.com"
-              className={authInputClass}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <InputError message={errors.email?.[0]} />
-        </div>
+        <AuthField
+          id="email"
+          label="Email address"
+          icon={Mail}
+          error={errors.email?.[0]}
+          className="mt-2.5 gap-1 sm:mt-5 sm:gap-2"
+        >
+          <AuthInput
+            id="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </AuthField>
 
-        <div className="mt-4 grid gap-2 sm:mt-5 sm:gap-2.5">
-          <Label htmlFor="password" className={authLabelClass}>
-            Password
-          </Label>
-          <div className="relative">
-            <LockKeyhole aria-hidden="true" strokeWidth={1.75} className={authFieldIconClass} />
-            <PasswordInput
-              id="password"
-              required
-              tabIndex={3}
-              autoComplete="new-password"
-              placeholder="Create a password"
-              className={`${authInputClass} pr-12! sm:pr-14!`}
-              toggleClassName="px-3 sm:px-4.5 text-neutral-600 dark:text-neutral-300"
-              iconClassName="size-4 sm:size-5.5"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <InputError message={errors.password?.[0]} />
-        </div>
+        <AuthField
+          id="password"
+          label="Password"
+          icon={LockKeyhole}
+          error={errors.password?.[0]}
+          className="mt-2.5 gap-1 sm:mt-5 sm:gap-2"
+        >
+          <AuthPasswordInput
+            id="password"
+            required
+            autoComplete="new-password"
+            placeholder="Create a password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </AuthField>
 
-        <div className="mt-4 grid gap-2 sm:mt-5 sm:gap-2.5">
-          <Label htmlFor="password_confirmation" className={authLabelClass}>
-            Confirm password
-          </Label>
-          <div className="relative">
-            <LockKeyhole aria-hidden="true" strokeWidth={1.75} className={authFieldIconClass} />
-            <PasswordInput
-              id="password_confirmation"
-              required
-              tabIndex={4}
-              autoComplete="new-password"
-              placeholder="Confirm your password"
-              className={`${authInputClass} pr-12! sm:pr-14!`}
-              toggleClassName="px-3 sm:px-4.5 text-neutral-600 dark:text-neutral-300"
-              iconClassName="size-4 sm:size-5.5"
-              value={passwordConfirmation}
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
-            />
-          </div>
-          <InputError message={errors.password_confirmation?.[0]} />
-        </div>
+        <AuthField
+          id="password_confirmation"
+          label="Confirm password"
+          icon={LockKeyhole}
+          error={errors.password_confirmation?.[0]}
+          className="mt-2.5 gap-1 sm:mt-5 sm:gap-2"
+        >
+          <AuthPasswordInput
+            id="password_confirmation"
+            required
+            autoComplete="new-password"
+            placeholder="Confirm your password"
+            value={passwordConfirmation}
+            onChange={(e) => setPasswordConfirmation(e.target.value)}
+          />
+        </AuthField>
 
-        <button type="submit" disabled={processing} className={authSubmitClass}>
-          {processing && <Spinner />}
-          Create account
-          <ArrowRight aria-hidden="true" strokeWidth={2.25} className="size-5 sm:size-5.5" />
-        </button>
+        <AuthSubmitButton processing={processing}>Create account</AuthSubmitButton>
       </form>
 
       <AuthFooter>
-        Already have an account?
-        <Link
-          href={redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login"}
-          className={`ml-1.5 sm:ml-2 ${authLinkClass}`}
-        >
+        Already have an account?{" "}
+        <Link href={loginHref} className={authLinkClass}>
           Log in
         </Link>
       </AuthFooter>
