@@ -1,15 +1,18 @@
 "use client";
 
+import { LockKeyhole, Mail, UserRound } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
-import AuthLayout from "@/components/auth/AuthLayout";
-import Button from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import InputError from "@/components/ui/InputError";
-import { Label } from "@/components/ui/Label";
-import Paragraph from "@/components/ui/Paragraph";
-import PasswordInput from "@/components/ui/PasswordInput";
-import Spinner from "@/components/ui/Spinner";
+import {
+  AuthField,
+  AuthFooter,
+  AuthInput,
+  authLinkClass,
+  AuthPasswordInput,
+  AuthSubmitButton,
+} from "@/components/auth/AuthFormParts";
+import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
 import { ApiError, useAuth } from "@/lib/auth-context";
 
 function RegisterPageInner() {
@@ -46,92 +49,96 @@ function RegisterPageInner() {
     }
   }
 
+  const loginHref = redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login";
+
   return (
-    <AuthLayout title="Create an account" description="Enter your details below to create your account">
-      <form className="flex flex-col gap-6" onSubmit={submit}>
-        <div className="grid gap-6">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              required
-              autoFocus
-              tabIndex={1}
-              autoComplete="name"
-              placeholder="Full name"
-              className="h-11 rounded-xl bg-background focus-visible:border-blue-500 focus-visible:ring-blue-500/30"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            <InputError message={errors.name?.[0]} />
-          </div>
+    <AuthSplitLayout
+      title="Create an account"
+      headline={["Let’s get you", "ready for the"]}
+      highlight="road."
+    >
+      <form className="mt-3 sm:mt-7 xl:mt-10" onSubmit={submit}>
+        <AuthField
+          id="name"
+          label="Name"
+          icon={UserRound}
+          error={errors.name?.[0]}
+          className="gap-1 sm:gap-2"
+        >
+          <AuthInput
+            id="name"
+            type="text"
+            required
+            autoFocus
+            autoComplete="name"
+            placeholder="Your full name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </AuthField>
 
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email address</Label>
-            <Input
-              id="email"
-              type="email"
-              required
-              tabIndex={2}
-              autoComplete="email"
-              placeholder="email@example.com"
-              className="h-11 rounded-xl bg-background focus-visible:border-blue-500 focus-visible:ring-blue-500/30"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <InputError message={errors.email?.[0]} />
-          </div>
+        <AuthField
+          id="email"
+          label="Email address"
+          icon={Mail}
+          error={errors.email?.[0]}
+          className="mt-2.5 gap-1 sm:mt-5 sm:gap-2"
+        >
+          <AuthInput
+            id="email"
+            type="email"
+            required
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </AuthField>
 
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <PasswordInput
-              id="password"
-              required
-              tabIndex={3}
-              autoComplete="new-password"
-              placeholder="Password"
-              className="h-11 rounded-xl bg-background focus-visible:border-blue-500 focus-visible:ring-blue-500/30"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <InputError message={errors.password?.[0]} />
-          </div>
+        <AuthField
+          id="password"
+          label="Password"
+          icon={LockKeyhole}
+          error={errors.password?.[0]}
+          className="mt-2.5 gap-1 sm:mt-5 sm:gap-2"
+        >
+          <AuthPasswordInput
+            id="password"
+            required
+            autoComplete="new-password"
+            placeholder="Create a password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </AuthField>
 
-          <div className="grid gap-2">
-            <Label htmlFor="password_confirmation">Confirm password</Label>
-            <PasswordInput
-              id="password_confirmation"
-              required
-              tabIndex={4}
-              autoComplete="new-password"
-              placeholder="Confirm password"
-              className="h-11 rounded-xl bg-background focus-visible:border-blue-500 focus-visible:ring-blue-500/30"
-              value={passwordConfirmation}
-              onChange={(e) => setPasswordConfirmation(e.target.value)}
-            />
-            <InputError message={errors.password_confirmation?.[0]} />
-          </div>
+        <AuthField
+          id="password_confirmation"
+          label="Confirm password"
+          icon={LockKeyhole}
+          error={errors.password_confirmation?.[0]}
+          className="mt-2.5 gap-1 sm:mt-5 sm:gap-2"
+        >
+          <AuthPasswordInput
+            id="password_confirmation"
+            required
+            autoComplete="new-password"
+            placeholder="Confirm your password"
+            value={passwordConfirmation}
+            onChange={(e) => setPasswordConfirmation(e.target.value)}
+          />
+        </AuthField>
 
-          <Button type="submit" className="mt-4 w-full justify-center" disabled={processing}>
-            {processing && <Spinner />}
-            Create account
-          </Button>
-        </div>
-
-        <Paragraph className="text-center">
-          Already have an account?{" "}
-          <Button
-            variant="ghost"
-            size="md"
-            className="p-0!"
-            href={redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login"}
-          >
-            Log in
-          </Button>
-        </Paragraph>
+        <AuthSubmitButton processing={processing}>Create account</AuthSubmitButton>
       </form>
-    </AuthLayout>
+
+      <AuthFooter>
+        Already have an account?{" "}
+        <Link href={loginHref} className={authLinkClass}>
+          Log in
+        </Link>
+      </AuthFooter>
+    </AuthSplitLayout>
   );
 }
 

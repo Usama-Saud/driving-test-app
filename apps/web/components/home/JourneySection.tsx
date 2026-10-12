@@ -107,15 +107,17 @@ export default function JourneySection({ variant = "home" }: { variant?: "home" 
                 <AiTutorDialog />
               ) : (
                 <div
-                  className="flex h-58 w-full flex-col items-center justify-center gap-0.5 rounded-2xl border border-[#23242b] px-4 text-center"
+                  className="relative h-58 w-full overflow-hidden rounded-2xl"
                   style={{ background: darkCardBg }}
                 >
-                  <p className="text-xs font-semibold text-[#c9cad2]">
-                    [IMAGE/UI] AI Tutor In Use
-                  </p>
-                  <p className="text-[10.5px] tracking-[0.42px] text-[#7b7c86] dark:text-neutral-400">
-                    480 × 560 · chat UI, tilted
-                  </p>
+                  <Image
+                    src="/journey/student-laptop.png"
+                    alt="Student practising mock exams on a laptop"
+                    fill
+                    quality={85}
+                    sizes="(max-width: 1024px) 100vw, 420px"
+                    className="object-cover object-center"
+                  />
                 </div>
               )}
             </div>
@@ -133,17 +135,17 @@ export default function JourneySection({ variant = "home" }: { variant?: "home" 
                   Walk in calm. Walk out with the only card that matters.
                 </Paragraph>
               </div>
-              <div className="flex h-58 w-full items-center justify-center">
+              <div
+                className="relative h-58 w-full overflow-hidden rounded-2xl"
+                style={{ background: darkCardBg }}
+              >
                 <Image
-                  src="/licence.png"
-                  alt="Sample California driver license"
-                  width={329}
-                  height={208}
-                  className="w-full max-w-[328px] rotate-8 rounded-[22px]"
-                  style={{
-                    boxShadow:
-                      "0 1.095px 0 0 rgba(255, 255, 255, 0.22) inset, 0 0 0 1.095px rgba(255, 255, 255, 0.09) inset, 0 26.281px 54.752px -24.091px rgba(8, 9, 12, 0.55), 0 8.76px 21.901px -13.141px rgba(8, 9, 12, 0.45)",
-                  }}
+                  src="/journey/student-licensed.png"
+                  alt="Newly licensed driver holding their license"
+                  fill
+                  quality={85}
+                  sizes="(max-width: 1024px) 100vw, 420px"
+                  className="object-cover object-center"
                 />
               </div>
             </div>

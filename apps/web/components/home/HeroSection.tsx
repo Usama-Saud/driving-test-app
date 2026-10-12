@@ -126,7 +126,7 @@ export default function HeroSection() {
 
         {/* Social proof — stars, avatar stack, stat line — sits directly UNDER the CTA
             and ABOVE the deck, matching the Figma hero order (node 1897:1800). */}
-        <div className="mt-8 flex flex-col items-center gap-4">
+        <div className="mt-4 flex flex-col items-center gap-4">
           <div className="flex items-center gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
