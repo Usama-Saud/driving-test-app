@@ -1,13 +1,16 @@
 "use client";
 
+import { Mail } from "lucide-react";
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import AuthLayout from "@/components/auth/AuthLayout";
-import Button from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import InputError from "@/components/ui/InputError";
-import { Label } from "@/components/ui/Label";
-import Paragraph from "@/components/ui/Paragraph";
-import Spinner from "@/components/ui/Spinner";
+import {
+  AuthField,
+  AuthFooter,
+  AuthInput,
+  authLinkClass,
+  AuthSubmitButton,
+} from "@/components/auth/AuthFormParts";
+import AuthSplitLayout from "@/components/auth/AuthSplitLayout";
 import { api, ApiError } from "@/lib/api";
 
 export default function ForgotPasswordPage() {
@@ -35,39 +38,44 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <AuthLayout title="Forgot password" description="Enter your email to receive a password reset link">
-      {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
+    <AuthSplitLayout
+      title="Forgot password?"
+      headline={["Let’s get you", "back on the"]}
+      highlight="road."
+    >
+      <p className="mt-2 text-[13px] text-neutral-500 sm:mt-3 sm:text-sm xl:text-base dark:text-neutral-400">
+        Enter your email and we&apos;ll send you a link to reset your password.
+      </p>
 
-      <div className="space-y-6">
-        <form className="space-y-6" onSubmit={submit}>
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email address</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="off"
-              autoFocus
-              placeholder="email@example.com"
-              className="h-11 rounded-xl bg-background focus-visible:border-blue-500 focus-visible:ring-blue-500/30"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <InputError message={errors.email?.[0]} />
-          </div>
+      {status && (
+        <div className="mt-4 rounded-xl bg-green-50 px-4 py-3 text-sm font-medium text-green-700 sm:mt-6 dark:bg-green-500/10 dark:text-green-400">
+          {status}
+        </div>
+      )}
 
-          <Button type="submit" className="w-full justify-center" disabled={processing}>
-            {processing && <Spinner />}
-            Email password reset link
-          </Button>
-        </form>
+      <form className="mt-4 sm:mt-7 xl:mt-10" onSubmit={submit}>
+        <AuthField id="email" label="Email address" icon={Mail} error={errors.email?.[0]}>
+          <AuthInput
+            id="email"
+            type="email"
+            required
+            autoFocus
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </AuthField>
 
-        <Paragraph className="text-center">
-          Or, return to{" "}
-          <Button variant="ghost" size="md" className="p-0!" href="/login">
-            log in
-          </Button>
-        </Paragraph>
-      </div>
-    </AuthLayout>
+        <AuthSubmitButton processing={processing}>Email password reset link</AuthSubmitButton>
+      </form>
+
+      <AuthFooter>
+        Remembered it?{" "}
+        <Link href="/login" className={authLinkClass}>
+          Back to log in
+        </Link>
+      </AuthFooter>
+    </AuthSplitLayout>
   );
 }
