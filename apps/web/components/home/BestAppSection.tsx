@@ -37,8 +37,8 @@ function Stat({ value, color }: { value: string; color: string }) {
 export default function BestAppSection() {
   return (
     <section className="relative z-10 bg-background pb-16 lg:pb-0">
-      <div className="bg-[linear-gradient(to_bottom,#fff_47.3%,var(--background)_47.3%)] px-5 dark:bg-background">
-        <TabletVideo className="mx-auto h-auto w-full max-w-[810px]" />
+      <div className="bg-[linear-gradient(to_bottom,#fff_47.3%,var(--background)_47.3%)] px-5">
+        <TabletVideo className="mx-auto h-auto w-full max-w-[810px] [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent),linear-gradient(to_bottom,transparent,black_3.5%,black_95%,transparent)] [mask-composite:intersect]" />
       </div>
 
       <div className="mx-auto max-w-container px-5">

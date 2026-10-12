@@ -1,42 +1,30 @@
 "use client";
 
-import Image from "next/image";
 import { useSyncExternalStore } from "react";
 
-const POSTER = "/bestapp/quiz-tablet-poster.png";
-const LABEL = "A DriveLane practice question shown on a tablet";
+function subscribe(onChange: () => void) {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
 
-const subscribe = () => () => {};
-const canPlayAlphaVideo = () =>
-  !/^((?!chrome|chromium|crios|fxios|edg|android).)*safari/i.test(navigator.userAgent);
+const isDark = () => document.documentElement.classList.contains("dark");
 
 export default function TabletVideo({ className }: { className?: string }) {
-  const canPlayAlpha = useSyncExternalStore(subscribe, canPlayAlphaVideo, () => false);
-
-  if (!canPlayAlpha) {
-    return (
-      <Image
-        src={POSTER}
-        alt={LABEL}
-        width={1544}
-        height={1128}
-        sizes="(min-width: 860px) 810px, 100vw"
-        className={className}
-      />
-    );
-  }
+  const dark = useSyncExternalStore(subscribe, isDark, () => false);
 
   return (
     <video
-      src="/bestapp/quiz-tablet-transparent.webm"
-      poster={POSTER}
-      width={1544}
-      height={1128}
+      key={dark ? "dark" : "light"}
+      src={dark ? "/bestapp/quiz-tablet-dark.mp4" : "/bestapp/quiz-tablet-light.mp4"}
+      poster="/bestapp/quiz-tablet-poster.png"
+      width={1536}
+      height={1120}
       autoPlay
       muted
       loop
       playsInline
-      aria-label={LABEL}
+      aria-label="A DriveLane practice question shown on a tablet"
       className={className}
     />
   );
