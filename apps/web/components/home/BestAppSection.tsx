@@ -3,14 +3,7 @@ import Image from "next/image";
 import Heading from "@/components/ui/Heading";
 import Paragraph from "@/components/ui/Paragraph";
 
-/**
- * "The best Driver's Ed App in USA" — an iPad quiz mockup over a Drivelane-vs-
- * traditional comparison: a green "96.6% pass rate" column with pro checks on the
- * left, a driver photo in the centre, and a red "32.8% failure rate" column with
- * con crosses on the right. Matched to Figma (file QOJ34F4OPHkJ5LFrJt9eCA, the
- * floating comparison band between "Everything you need to ace it" and "Every
- * tool built"). iPad + driver imagery exported from Figma.
- */
+
 const PROS = [
   "Updated Curriculum for 2026",
   "State-Specific Questions",
@@ -45,17 +38,13 @@ export default function BestAppSection() {
     <section
       className="relative z-10 px-5 pb-16 lg:pb-0"
       style={{
-        // Split backdrop: the tan (section-above) colour on top and the lighter
-        // section colour below, with the hard boundary falling behind the iPad's
-        // middle — matching the Figma composition where the device straddles it.
         backgroundImage:
-          "linear-gradient(to bottom, var(--background2) 0px, var(--background2) 385px, var(--background) 385px)",
+          "linear-gradient(to bottom, #fcfbfa 0px, var(--background) 240px)",
       }}
     >
       <div className="mx-auto max-w-container">
-        {/* iPad quiz mockup — pulled up so it straddles the section boundary and
-            bleeds into the section above, matching the Figma composition. */}
-        <div className="-mt-4 flex justify-center lg:-mt-14">
+       
+        <div className="mt-8 flex justify-center lg:mt-12">
           <div className="w-full max-w-[980px] overflow-hidden rounded-[2.5rem] bg-black">
             <video
               src="/bestapp/ipad-quiz.mp4"
@@ -80,12 +69,8 @@ export default function BestAppSection() {
           </Paragraph>
         </div>
 
-        {/* Comparison — on desktop the driver is absolutely centred and BLEEDS
-            over/behind the two text columns (Figma composition, node 1980:9392 at
-            527×559, bottom edge = the next section's top). The columns sit at their
-            Figma vertical offsets. On mobile everything stacks. */}
+       
         <div className="relative mt-10 flex flex-col items-center gap-10 lg:mt-8 lg:block lg:h-[560px]">
-          {/* Driver — absolute centre (desktop) / in-flow (mobile) */}
           <div className="order-2 lg:pointer-events-none lg:absolute lg:bottom-0 lg:left-1/2 lg:z-0 lg:-translate-x-1/2">
             <Image
               src="/bestapp/driver-node.png"
