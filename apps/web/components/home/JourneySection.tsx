@@ -76,7 +76,7 @@ export default function JourneySection({ variant = "home" }: { variant?: "home" 
                 style={{ background: darkCardBg }}
               >
                 <Image
-                  src="/journey/student-phone.jpg"
+                  src="/journey/student-phone.png"
                   alt="Student planning their driving test on a phone"
                   fill
                   quality={85}
