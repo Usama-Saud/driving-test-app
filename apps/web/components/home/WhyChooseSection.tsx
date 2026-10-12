@@ -152,7 +152,7 @@ export default function WhyChooseSection() {
             <article
               key={card.vehicle}
               style={{ backgroundColor: card.tint }}
-              className="relative flex min-h-[20rem] flex-col overflow-hidden rounded-3xl p-6 shadow-card sm:min-h-[22rem] lg:h-[292px] lg:min-h-0"
+              className="relative flex min-h-[20rem] flex-col overflow-hidden rounded-3xl p-6 shadow-card sm:min-h-[22rem] lg:min-h-[292px]"
             >
               {}
               <Image
@@ -183,7 +183,7 @@ export default function WhyChooseSection() {
                 </div>
 
                 {}
-                <ul className="flex flex-col gap-3 lg:max-w-[62%]">
+                <ul className="flex flex-col gap-3 lg:max-w-[74%]">
                   {card.points.map((point) => (
                     <li key={point} className="flex items-start gap-2.5">
                       <span
@@ -191,7 +191,7 @@ export default function WhyChooseSection() {
                       >
                         <Check className="size-3.5 stroke-3 text-white" />
                       </span>
-                      <span className="text-sm leading-5 text-neutral-700">
+                      <span className="text-[13px] leading-5 text-neutral-700 lg:whitespace-nowrap">
                         {point}
                       </span>
                     </li>
@@ -202,7 +202,7 @@ export default function WhyChooseSection() {
                   <Button
                     href={hrefFor(card)}
                     onClick={() => onCtaClick(card)}
-                    text="Start practicing"
+                    text="Start Practicing"
                     icon={ArrowRight}
                     iconPosition="right"
                     size="sm"
