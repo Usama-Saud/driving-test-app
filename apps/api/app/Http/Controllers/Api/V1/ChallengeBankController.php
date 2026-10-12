@@ -82,10 +82,10 @@ class ChallengeBankController extends Controller
      * Drop a question from the vault entirely — both reasons at once, which is what "remove from my
      * vault" means and what the mobile app's clear-all has always relied on.
      *
-     * `?only=bookmarked` clears just that reason instead, for the web quiz screen's bookmark toggle:
-     * un-bookmarking a question the learner also got wrong should leave it filed as missed, not quietly
-     * wipe it from the list the grader is keeping for them. A no-op (still 200) either way if it was
-     * never in their bank.
+     * `?only=missed` / `?only=bookmarked` clears just that one reason instead, leaving the row in
+     * place while the other still holds. No client uses it today — the quiz screen's bookmark means
+     * "this is in my vault" and so removes both — but a caller that wants to retire one reason
+     * without touching the other has it. A no-op (still 200) either way if it was never banked.
      */
     public function destroy(Request $request, QuizQuestion $question): JsonResponse
     {

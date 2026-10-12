@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\Admin\AmbientTrackController as AdminAmbientTrac
 use App\Http\Controllers\Api\V1\Admin\AttemptController as AdminAttemptController;
 use App\Http\Controllers\Api\V1\Admin\CheatSheetController as AdminCheatSheetController;
 use App\Http\Controllers\Api\V1\Admin\EmailSubscriberController as AdminEmailSubscriberController;
+use App\Http\Controllers\Api\V1\Admin\ExamFeedbackController as AdminExamFeedbackController;
 use App\Http\Controllers\Api\V1\Admin\ExpertController as AdminExpertController;
 use App\Http\Controllers\Api\V1\Admin\FlashcardController as AdminFlashcardController;
 use App\Http\Controllers\Api\V1\Admin\HandbookController as AdminHandbookController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\Api\V1\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\V1\Auth\ProfileController;
 use App\Http\Controllers\Api\V1\BillingController;
 use App\Http\Controllers\Api\V1\ChallengeBankController;
+use App\Http\Controllers\Api\V1\ExamFeedbackController;
 use App\Http\Controllers\Api\V1\FamilyController;
 use App\Http\Controllers\Api\V1\FlashcardReviewController;
 use App\Http\Controllers\Api\V1\HazardAttemptController;
@@ -192,6 +194,8 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/me/stats', [StatsController::class, 'index']);
             Route::get('/me/progress', [ProgressController::class, 'index']);
             Route::put('/me/exam-date', [ProgressController::class, 'updateExamDate']);
+            Route::post('/me/exam-feedback', [ExamFeedbackController::class, 'store'])
+                ->middleware('throttle:10,1');
 
             Route::post('flashcards/{flashcard}/review', [FlashcardReviewController::class, 'store'])
                 ->middleware('throttle:60,1');
@@ -286,6 +290,9 @@ Route::prefix('v1')->group(function (): void {
 
             Route::get('email-subscribers', [AdminEmailSubscriberController::class, 'index']);
             Route::delete('email-subscribers/{emailSubscriber}', [AdminEmailSubscriberController::class, 'destroy']);
+
+            Route::get('exam-feedback', [AdminExamFeedbackController::class, 'index']);
+            Route::delete('exam-feedback/{examFeedback}', [AdminExamFeedbackController::class, 'destroy']);
 
             Route::get('pass-guarantee-claims', [AdminPassGuaranteeClaimController::class, 'index']);
             Route::post('pass-guarantee-claims/{passGuaranteeClaim}/approve', [AdminPassGuaranteeClaimController::class, 'approve']);

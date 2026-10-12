@@ -251,6 +251,12 @@ export type QuizAnswerCheckResponse = {
   explanation: string | null;
   // Null until at least one attempt has been submitted for this question.
   answer_popularity: { answer_id: number; percentage: number }[] | null;
+  /**
+   * Whether this question now sits in the learner's Quiz Vault, for either reason — a wrong answer
+   * files it, a bookmark saves it. Authoritative: the player can't work this out on its own, since
+   * the grader banks a missed question server-side without the client being told.
+   */
+  in_vault: boolean;
 };
 
 // AI tutor reply from POST /quizzes/{quiz}/questions/{question}/assist.

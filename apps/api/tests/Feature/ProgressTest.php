@@ -189,7 +189,69 @@ class ProgressTest extends TestCase
         $response->assertJsonPath('streak.current', 2);
         $response->assertJsonPath('streak.daily_target', 15);
         $response->assertJsonPath('streak.answered_today', 0);
-        $response->assertJsonCount(5, 'streak.days');
+        $response->assertJsonCount(7, 'streak.days');
+    }
+
+    public function test_streak_days_are_the_last_seven_ending_today(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-10-08'));
+
+        $user = $this->verifiedUser();
+
+        $days = $this->actingAs($user)->getJson('/api/v1/me/progress')->assertOk()->json('streak.days');
+
+        $this->assertCount(7, $days);
+        $this->assertSame('2026-10-02', $days[0]['date'], 'six days back');
+        $this->assertSame('2026-10-08', $days[6]['date'], 'through today');
+
+        Carbon::setTestNow();
+    }
+
+    public function test_the_strip_moves_on_by_one_day(): void
+    {
+        $user = $this->verifiedUser();
+
+        Carbon::setTestNow(Carbon::parse('2026-10-08'));
+        $thursday = $this->actingAs($user)->getJson('/api/v1/me/progress')->assertOk()->json('streak.days');
+
+        Carbon::setTestNow(Carbon::parse('2026-10-09'));
+        $friday = $this->actingAs($user)->getJson('/api/v1/me/progress')->assertOk()->json('streak.days');
+
+        // Yesterday's six newest days are today's six oldest: the window travels, it doesn't jump.
+        $this->assertSame(
+            array_column(array_slice($thursday, 1), 'date'),
+            array_column(array_slice($friday, 0, 6), 'date'),
+        );
+        $this->assertSame('2026-10-09', $friday[6]['date']);
+
+        Carbon::setTestNow();
+    }
+
+    public function test_a_streak_running_into_a_new_week_stays_visible_on_the_strip(): void
+    {
+        // Sunday — the start of a new week. The learner hit the target on each of the four days
+        // before it (Wed to Sat, the tail of the old week) and again today.
+        Carbon::setTestNow(Carbon::parse('2026-10-11'));
+
+        $user = $this->verifiedUser();
+        $quiz = $this->quizWithQuestions(20);
+
+        foreach (['2026-10-07', '2026-10-08', '2026-10-09', '2026-10-10', '2026-10-11'] as $date) {
+            $this->attempt($user, $quiz, 15, AttemptStatus::Completed, Carbon::parse($date));
+        }
+
+        $response = $this->actingAs($user)->getJson('/api/v1/me/progress')->assertOk();
+        $response->assertJsonPath('streak.current', 5);
+
+        // All five are still on the strip, so the dots agree with the count above them. A
+        // Sunday-to-Saturday strip would have shown this learner one filled dot out of seven.
+        $days = $response->json('streak.days');
+        $this->assertSame(5, count(array_filter($days, fn ($d) => $d['met'])));
+        $this->assertTrue($days[6]['met'], 'today');
+        $this->assertFalse($days[0]['met'], 'and the two days before the streak began');
+        $this->assertFalse($days[1]['met']);
+
+        Carbon::setTestNow();
     }
 
     public function test_todays_unfinished_target_does_not_break_the_streak(): void

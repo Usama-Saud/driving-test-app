@@ -10,6 +10,7 @@ export * from "./types/image-regeneration";
 export * from "./types/admin";
 export * from "./types/billing";
 export * from "./types/stats";
+export * from "./types/exam-feedback";
 export * from "./types/subscribers";
 export * from "./types/expert";
 export * from "./api-client";

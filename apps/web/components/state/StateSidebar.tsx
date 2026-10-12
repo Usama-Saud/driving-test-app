@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, Flame, Pencil } from "lucide-react";
 import type { UserProgress } from "@driving-test-app/shared";
 import ExamPrepTree from "@/components/state/ExamPrepTree";
+import ExamDateDialog from "@/components/state/permit-test/ExamDateDialog";
 import { useAuth, useEntitlement } from "@/lib/auth-context";
 import { useExamDate } from "@/lib/useExamDate";
 import { useLadderPhases } from "@/lib/usePhaseCompletion";
@@ -45,55 +46,14 @@ function weekdayLetters(date: string): string {
     .slice(0, 2);
 }
 
-/** The learner's exam date, with inline editing behind the pencil. */
+/**
+ * The learner's exam date, with the pencil opening the same calendar the hero's "Reschedule exam
+ * date" link does. It used to reveal a bare `<input type="date">` here — two ways to set one value,
+ * and the smaller of the two was the harder one to use.
+ */
 function ExamDate({ onSaved }: { onSaved: () => void }) {
-  const { examDate, save, saving, error } = useExamDate();
-  const [editing, setEditing] = useState(false);
-  const [value, setValue] = useState(examDate ?? "");
-
-  function startEditing() {
-    setValue(examDate ?? "");
-    setEditing(true);
-  }
-
-  async function submit(next: string) {
-    if (await save(next)) {
-      setEditing(false);
-      onSaved();
-    }
-  }
-
-  if (editing) {
-    return (
-      <div className="space-y-2">
-        <label
-          htmlFor="exam-date"
-          className="text-[11px] font-semibold tracking-wide text-neutral-500 dark:text-neutral-400 uppercase"
-        >
-          Exam date
-        </label>
-        <div className="flex items-center gap-2">
-          <input
-            id="exam-date"
-            type="date"
-            value={value}
-            disabled={saving}
-            onChange={(e) => setValue(e.target.value)}
-            className="min-w-0 flex-1 rounded-lg border border-border bg-white dark:bg-neutral-800 px-2 py-1 text-sm text-neutral-900 dark:text-neutral-100"
-          />
-          <button
-            type="button"
-            disabled={saving}
-            onClick={() => submit(value)}
-            className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white disabled:opacity-60"
-          >
-            {saving ? "Saving…" : "Save"}
-          </button>
-        </div>
-        {error && <p className="text-destructive text-xs">{error}</p>}
-      </div>
-    );
-  }
+  const { examDate } = useExamDate();
+  const [picking, setPicking] = useState(false);
 
   return (
     <div className="flex items-start justify-between gap-2">
@@ -107,12 +67,14 @@ function ExamDate({ onSaved }: { onSaved: () => void }) {
       </div>
       <button
         type="button"
-        onClick={startEditing}
+        onClick={() => setPicking(true)}
         aria-label={examDate ? "Change exam date" : "Set exam date"}
         className="rounded-full border border-border bg-white dark:bg-neutral-800 p-1.5 text-neutral-500 dark:text-neutral-400 transition-colors hover:text-neutral-900 dark:hover:text-neutral-100"
       >
         <Pencil className="size-3.5" />
       </button>
+
+      <ExamDateDialog open={picking} onOpenChange={setPicking} onSaved={onSaved} />
     </div>
   );
 }

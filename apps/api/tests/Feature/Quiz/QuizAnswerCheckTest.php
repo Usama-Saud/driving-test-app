@@ -43,6 +43,8 @@ class QuizAnswerCheckTest extends TestCase
             'is_correct' => true,
             'explanation' => 'Because the sign says so.',
             'answer_popularity' => null,
+            // A guest with no token has no vault to be in; QuizVaultReasonsTest covers the rest.
+            'in_vault' => false,
         ]);
     }
 

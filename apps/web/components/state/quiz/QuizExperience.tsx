@@ -32,7 +32,7 @@ import KeyboardShortcutsDialog from "@/components/state/quiz/KeyboardShortcutsDi
 import RestartDialog from "@/components/state/quiz/RestartDialog";
 import StreakBadge from "@/components/state/quiz/StreakBadge";
 import ReportMistakeDialog from "@/components/state/quiz/ReportMistakeDialog";
-import Toast, { type ToastVariant } from "@/components/state/quiz/Toast";
+import Toast, { type ToastVariant } from "@/components/ui/Toast";
 import QuizResults from "@/components/state/quiz/QuizResults";
 import { api, ApiError } from "@/lib/api";
 import { invalidatePhaseLadder } from "@/lib/phaseLadder";
@@ -562,6 +562,18 @@ function QuizTaker({
       );
       setCheckedByQuestionId((prev) => ({ ...prev, [questionId]: res }));
 
+      // A wrong answer files the question in the Quiz Vault server-side, so the bookmark has to
+      // follow what the server did rather than only what was tapped here — otherwise the question
+      // is in the vault and the icon still reads as unsaved, which is no sign at all that it was
+      // saved. The server is told first, so `in_vault` covers a hand-made bookmark too.
+      setFlaggedIds((prev) => {
+        if (prev.has(questionId) === res.in_vault) return prev;
+        const next = new Set(prev);
+        if (res.in_vault) next.add(questionId);
+        else next.delete(questionId);
+        return next;
+      });
+
       // Update the consecutive-correct streak (drives the bottom-bar badge).
       if (res.is_correct) {
         streakRef.current += 1;
@@ -604,11 +616,13 @@ function QuizTaker({
       return next;
     });
 
-    // `only=bookmarked` so un-bookmarking a question the learner also got wrong leaves it in the
-    // vault as a miss — the grader's list is not theirs to clear from here.
+    // The icon reads "this is in your Quiz Vault", for either reason, so turning it off has to
+    // take the question out — both reasons. Clearing only the bookmark would leave a question the
+    // learner got wrong sitting in the vault with the icon still lit, and the tap would look
+    // broken. Removing a miss on purpose is the learner's call; the vault page already allows it.
     const request = bookmarking
       ? api.post("/challenge-bank", { question_ids: [questionId] })
-      : api.delete(`/challenge-bank/${questionId}?only=bookmarked`);
+      : api.delete(`/challenge-bank/${questionId}`);
 
     request.catch(() => {
       setFlaggedIds((prev) => {
@@ -852,6 +866,10 @@ function QuizTaker({
             is_correct: a.is_correct,
             explanation: a.explanation,
             answer_popularity: null,
+            // Rebuilt from the finished attempt rather than read back: a wrong answer is exactly
+            // what files a question in the vault. A bookmark added by hand isn't visible here, but
+            // this view doesn't offer the bookmark.
+            in_vault: !a.is_correct,
           };
           if (a.selected_answer_id != null)
             restoredAnswers[a.question_id] = a.selected_answer_id;
@@ -895,12 +913,17 @@ function QuizTaker({
         );
         const checked: Record<number, QuizAnswerCheckResponse> = {};
         const restoredAnswers: Record<number, number> = {};
+        const banked = new Set<number>();
         for (const [questionId, check] of Object.entries(res.answers)) {
           const id = Number(questionId);
           checked[id] = check;
           if (check.selected_answer_id != null)
             restoredAnswers[id] = check.selected_answer_id;
+          if (check.in_vault) banked.add(id);
         }
+        // Resuming has to show the vault as it really is, not just the marks this browser
+        // remembers — a question banked by a wrong answer was invisible here before.
+        setFlaggedIds((prev) => new Set([...prev, ...banked]));
         // Navigation only ever advances one question at a time (see nextQuestion/goToQuestion
         // below), so "how many questions were answered" and "how far the learner got" are always
         // the same index — land back on the first unanswered one, or the last question if every

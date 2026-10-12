@@ -31,6 +31,45 @@ class QuizVaultReasonsTest extends TestCase
         return compact('quiz', 'question', 'correct', 'wrong');
     }
 
+    public function test_checking_an_answer_reports_whether_the_question_is_now_in_the_vault(): void
+    {
+        ['quiz' => $quiz, 'question' => $question, 'correct' => $correct, 'wrong' => $wrong] = $this->makeQuestion();
+        $this->actingAs(User::factory()->create(), 'sanctum');
+
+        $check = fn (int $answerId) => $this->postJson(
+            "/api/v1/quizzes/{$quiz->id}/questions/{$question->id}/check",
+            ['answer_id' => $answerId],
+        )->assertOk();
+
+        // Wrong: the grader files it, and says so, which is the player's only way to know. Without
+        // this the question sits in the vault while the bookmark icon still reads as unsaved.
+        $check($wrong->id)->assertJsonPath('in_vault', true);
+
+        // Right: no longer a miss, nothing else holding it, so it leaves.
+        $check($correct->id)->assertJsonPath('in_vault', false);
+
+        // Saved by hand: in the vault for the other reason, and still reported as such.
+        $this->postJson('/api/v1/challenge-bank', ['question_ids' => [$question->id]])->assertCreated();
+        $check($correct->id)->assertJsonPath('in_vault', true);
+    }
+
+    public function test_resuming_an_attempt_reports_the_vault_state_of_each_answer(): void
+    {
+        ['quiz' => $quiz, 'question' => $question, 'wrong' => $wrong] = $this->makeQuestion();
+        $this->actingAs(User::factory()->create(), 'sanctum');
+
+        $attemptId = $this->postJson("/api/v1/quizzes/{$quiz->id}/attempts/start")->assertOk()->json('attempt.id');
+        $this->postJson("/api/v1/quizzes/{$quiz->id}/questions/{$question->id}/check", [
+            'answer_id' => $wrong->id,
+            'attempt_id' => $attemptId,
+        ])->assertOk();
+
+        // Coming back to the attempt has to show the same bookmark state it was left in.
+        $this->postJson("/api/v1/quizzes/{$quiz->id}/attempts/start")
+            ->assertOk()
+            ->assertJsonPath("answers.{$question->id}.in_vault", true);
+    }
+
     public function test_a_bookmark_survives_answering_the_question_correctly(): void
     {
         ['quiz' => $quiz, 'question' => $question, 'correct' => $correct, 'wrong' => $wrong] = $this->makeQuestion();

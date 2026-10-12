@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import ExamDateDialog from "@/components/state/permit-test/ExamDateDialog";
+import ExamFeedbackDialog from "@/components/state/permit-test/ExamFeedbackDialog";
 import ExamTakenDialog from "@/components/state/permit-test/ExamTakenDialog";
 import HandUnderline from "@/components/ui/HandUnderline";
 import Heading from "@/components/ui/Heading";
@@ -23,17 +25,19 @@ function formatExamDate(date: string): string {
  * The hero a signed-in learner gets: no pitch, just where they are and what's next. The marketing
  * hero ("Start your Free … Practice Test") stays for visitors who haven't signed up yet.
  *
- * "Reschedule exam date" is a placeholder link for now; the date is still editable from the
- * progress rail's pencil, which writes through the same useExamDate hook.
+ * "Reschedule exam date" opens the calendar. It writes through the same useExamDate hook as the
+ * progress rail's pencil, so both see the new date immediately.
  *
- * "I've taken the written exam" opens the congratulations dialog. There is nothing to record —
- * the API has no concept of an exam having been sat — so it asks for a review instead, which is
- * what that moment is actually good for.
+ * "I've taken the written exam" asks how it went — a rating, optionally a few words and a photo —
+ * and thanks them once that is stored. Sitting the exam itself isn't recorded: the app has no way
+ * to know whether it happened, and the useful part of the moment is the verdict, not the claim.
  */
 export default function SignedInHero() {
   const { selectedState, selectedTestType } = useWebLayout();
   const { examDate } = useExamDate();
-  const [examTakenOpen, setExamTakenOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [thanksOpen, setThanksOpen] = useState(false);
+  const [examDateOpen, setExamDateOpen] = useState(false);
 
   const isPermitTrack = selectedTestType === "permit_test";
   const examLabel = isPermitTrack ? "knowledge" : "driving";
@@ -56,24 +60,31 @@ export default function SignedInHero() {
         {isPermitTrack && (
           <button
             type="button"
-            onClick={() => setExamTakenOpen(true)}
+            onClick={() => setFeedbackOpen(true)}
             className="mt-4 inline-flex h-13 cursor-pointer items-center justify-center rounded-lg bg-blue-600 px-8 text-base font-semibold text-white transition-colors hover:bg-blue-700"
           >
             I&apos;ve taken the written exam
           </button>
         )}
 
-        <a
-          href="#"
-          className="text-sm font-semibold text-blue-700 dark:text-blue-300 hover:underline"
+        <button
+          type="button"
+          onClick={() => setExamDateOpen(true)}
+          className="cursor-pointer rounded-sm text-sm font-semibold text-blue-700 hover:underline focus-visible:ring-2 focus-visible:ring-chart-1 focus-visible:outline-none dark:text-blue-300"
         >
           {examDate
             ? `Reschedule exam date · ${formatExamDate(examDate)}`
             : "Set your exam date"}
-        </a>
+        </button>
       </div>
 
-      <ExamTakenDialog open={examTakenOpen} onOpenChange={setExamTakenOpen} />
+      <ExamFeedbackDialog
+        open={feedbackOpen}
+        onOpenChange={setFeedbackOpen}
+        onSubmitted={() => setThanksOpen(true)}
+      />
+      <ExamTakenDialog open={thanksOpen} onOpenChange={setThanksOpen} />
+      <ExamDateDialog open={examDateOpen} onOpenChange={setExamDateOpen} />
     </section>
   );
 }

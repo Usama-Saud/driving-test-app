@@ -413,6 +413,22 @@ class QuizController extends Controller
 
         $attempt = ($this->startOrResumeAttempt)($quiz, $user?->id, $guestToken, $request->boolean('force_new'));
 
+        // Which of the already-answered questions are in this learner's vault, so a resumed
+        // attempt shows the same bookmark state as the one they left. One query for the set, not
+        // one per answer.
+        $bankOwner = $user !== null
+            ? ['user_id' => $user->id]
+            : ($guestToken !== null ? ['guest_token' => $guestToken] : null);
+
+        $banked = $bankOwner === null
+            ? []
+            : ChallengeBankItem::query()
+                ->where($bankOwner)
+                ->whereIn('quiz_question_id', $attempt->answers->pluck('quiz_question_id'))
+                ->pluck('quiz_question_id')
+                ->flip()
+                ->all();
+
         $answers = [];
         foreach ($attempt->answers as $answer) {
             $answers[$answer->quiz_question_id] = [
@@ -422,6 +438,7 @@ class QuizController extends Controller
                 'is_correct' => $answer->is_correct,
                 'explanation' => $answer->question?->explanation,
                 'answer_popularity' => null,
+                'in_vault' => isset($banked[$answer->quiz_question_id]),
             ];
         }
 
@@ -554,10 +571,19 @@ class QuizController extends Controller
             ? ['user_id' => $user->id]
             : (($guestToken = $this->resolveGuestToken($request)) !== null ? ['guest_token' => $guestToken] : null);
 
+        // Reported back so the player's bookmark can show the vault's real state instead of only
+        // the marks made by hand in this browser — a question banked by a wrong answer looked
+        // unsaved, which gave the learner no sign anything had happened.
+        $inVault = false;
         if ($bankOwner !== null) {
             $graded['is_correct']
                 ? ChallengeBankItem::clear($bankOwner, [$question->id], 'missed')
                 : ChallengeBankItem::mark($bankOwner, [$question->id], 'missed');
+
+            $inVault = ChallengeBankItem::query()
+                ->where($bankOwner)
+                ->where('quiz_question_id', $question->id)
+                ->exists();
         }
 
         // Persist the answer against the in-progress attempt so the player can resume ("Continue").
@@ -597,6 +623,7 @@ class QuizController extends Controller
             'is_correct' => $graded['is_correct'],
             'explanation' => $explanation,
             'answer_popularity' => ($this->computePopularity)($question),
+            'in_vault' => $inVault,
         ]);
     }
 

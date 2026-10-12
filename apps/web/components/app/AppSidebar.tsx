@@ -19,6 +19,7 @@ import {
   Music,
   NotebookText,
   Receipt,
+  Star,
   ShieldCheck,
   Siren,
   UserCheck,
@@ -66,6 +67,7 @@ const adminNavItems = [
   { title: "User Management", href: "/admin/user-management", icon: UserRound },
   { title: "All Results", href: "/admin/attempts", icon: ClipboardCheck },
   { title: "Email Subscribers", href: "/admin/email-subscribers", icon: Mail },
+  { title: "Exam Feedback", href: "/admin/exam-feedback", icon: Star },
   { title: "Pass Guarantee Claims", href: "/admin/pass-guarantee-claims", icon: Receipt },
   {
     title: "Image Approvals",

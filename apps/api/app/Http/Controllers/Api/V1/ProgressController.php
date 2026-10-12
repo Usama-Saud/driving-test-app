@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ProgressController extends Controller
@@ -17,8 +18,18 @@ class ProgressController extends Controller
     /** Questions a learner has to answer in a day for it to count towards their streak. */
     private const STREAK_DAILY_QUESTIONS = 15;
 
-    /** How many days of streak history to return (the sidebar renders one dot per day). */
-    private const STREAK_HISTORY_DAYS = 5;
+    /**
+     * Days on the streak strip: the last seven, ending today, moving on by one each day.
+     *
+     * It was five, which on a Thursday rendered Sun–Thu and left two days off a strip meant to
+     * show a week. A fixed Sunday–Saturday week fills the row, but it empties every Sunday — a
+     * learner five days into a streak would read "5 Day Streak" above a single filled dot. A
+     * window that travels with the learner never contradicts the count above it.
+     *
+     * Every day on it has already happened, so an empty dot always means a day that was missed,
+     * never one that hasn't arrived yet.
+     */
+    private const STREAK_HISTORY_DAYS = 7;
 
     /**
      * My study progress for one state/vehicle/track (self-service)
@@ -35,7 +46,7 @@ class ProgressController extends Controller
      * - `questions`: distinct questions answered at least once, over how many exist in that scope.
      *   Its percentage is the sidebar's headline progress bar.
      * - `streak`: consecutive days, ending today or yesterday, on which the learner answered at
-     *   least `daily_target` questions. `days` is the most recent few days oldest-first so the
+     *   least `daily_target` questions. `days` is the last seven days, oldest first, so the
      *   client can render the weekday dots without doing its own date maths.
      */
     public function index(Request $request): JsonResponse
@@ -100,7 +111,7 @@ class ProgressController extends Controller
      * The quizzes that count towards this scope — the same active/published set `GET /quizzes`
      * lists, so the denominators here match what the learner can actually see and take.
      *
-     * @return \Illuminate\Support\Collection<int, Quiz>
+     * @return Collection<int, Quiz>
      */
     private function scopedQuizzes(Request $request)
     {
@@ -127,7 +138,7 @@ class ProgressController extends Controller
      * test doesn't inflate coverage, and an abandoned attempt still counts the questions it did
      * reach.
      *
-     * @param  \Illuminate\Support\Collection<int, int>  $quizIds
+     * @param  Collection<int, int>  $quizIds
      */
     private function questionsCovered(User $user, $quizIds): int
     {
@@ -147,7 +158,7 @@ class ProgressController extends Controller
      * Distinct questions answered per quiz, keyed by quiz slug. Same counting rule as
      * `questionsCovered`, just not collapsed across quizzes.
      *
-     * @param  \Illuminate\Support\Collection<int, int>  $quizIds
+     * @param  Collection<int, int>  $quizIds
      * @return array<string, int>
      */
     private function questionsCoveredByQuiz(User $user, $quizIds): array
@@ -173,7 +184,7 @@ class ProgressController extends Controller
      * foreign key — a question belongs to exactly one quiz, and a marathon carries its own rows
      * rather than referencing the tests it spans — so this is a plain count, not a distinct one.
      *
-     * @param  \Illuminate\Support\Collection<int, int>  $quizIds
+     * @param  Collection<int, int>  $quizIds
      */
     private function questionsAvailable($quizIds): int
     {

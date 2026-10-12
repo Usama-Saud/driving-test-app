@@ -1,6 +1,5 @@
 "use client";
 
-import { Star } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,20 +8,12 @@ import {
 } from "@/components/ui/dialog";
 
 /**
- * Where to send someone who wants to leave a review. Not hardcoded because the review page is an
- * account-level URL nobody can guess — set NEXT_PUBLIC_TRUSTPILOT_REVIEW_URL (e.g.
- * https://www.trustpilot.com/evaluate/yourdomain.com) and the button appears. Left unset, the
- * dialog still congratulates them; it just doesn't offer a link that goes nowhere.
- */
-const REVIEW_URL = process.env.NEXT_PUBLIC_TRUSTPILOT_REVIEW_URL;
-
-/**
- * Shown when a learner says they've sat the written exam. There's nothing to record — the API has
- * no concept of an exam having been taken — so this does the one thing that moment is actually
- * good for: asking someone at the finish line to say how it went.
+ * The thank-you, shown once a learner's feedback has actually been stored.
  *
- * The review count matches the claim the site already makes in its heroes ("4.7/5 from 38,000+
- * students") rather than introducing a second, different number.
+ * It used to be the whole of this moment, and it ended in a Trustpilot button — the opinion handed
+ * to a third party and nothing kept on our side. ExamFeedbackDialog now asks first and keeps the
+ * answer, so by the time this appears there is something real to thank them for, and the link has
+ * nothing left to do.
  */
 export default function ExamTakenDialog({
   open,
@@ -44,7 +35,7 @@ export default function ExamTakenDialog({
 
         <div className="flex flex-col items-center gap-3 px-6 pt-5 pb-8 text-center">
           <DialogTitle className="font-sora text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
-            Congratulations!
+            Thank you!
           </DialogTitle>
           <DialogDescription className="text-base leading-6 text-neutral-700 dark:text-neutral-300">
             Your journey matters to us, and your feedback fuels our passion to
@@ -52,23 +43,13 @@ export default function ExamTakenDialog({
             country.
           </DialogDescription>
 
-          {REVIEW_URL && (
-            <>
-              <a
-                href={REVIEW_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-green-500 px-6 py-3.5 text-base font-semibold text-white transition-colors hover:bg-green-600"
-              >
-                Review us on
-                <Star className="size-5 fill-white" strokeWidth={0} />
-                Trustpilot
-              </a>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                more than 38,000 users have already left a review
-              </p>
-            </>
-          )}
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            className="mt-2 h-12 w-full cursor-pointer rounded-lg bg-blue-600 text-base font-semibold text-white transition-colors hover:bg-blue-700"
+          >
+            Done
+          </button>
         </div>
       </DialogContent>
     </Dialog>

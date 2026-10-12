@@ -43,7 +43,7 @@ export type UserProgress = {
     current: number;
     daily_target: number;
     answered_today: number;
-    /** The most recent few days, oldest first — one entry per streak dot. */
+    /** The last seven days ending today, oldest first — one entry per streak dot. */
     days: { date: string; answered: number; met: boolean }[];
   };
 };
