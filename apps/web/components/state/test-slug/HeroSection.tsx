@@ -39,12 +39,15 @@ function Chip({ children }: { children: React.ReactNode }) {
 }
 
 export default function HeroSection({ testSlug }: { testSlug: string }) {
-  const { selectedState } = useWebLayout();
+  const { selectedState, selectedVehicle } = useWebLayout();
   const stateSlug = stateToSlug(selectedState);
   const quiz = useResolvedQuiz(testSlug);
   const stats = useStateStats();
 
   const isDrivingTest = quiz?.test_track === "driving_test";
+  // "DMV Motorcycle Permit Practice Test" / "DMV CDL Permit Practice Test"; plain cars keep the
+  // generic "DMV Permit Practice Test" wording.
+  const vehicleLabel = selectedVehicle === "Motorcycle" || selectedVehicle === "CDL" ? `${selectedVehicle} ` : "";
   const quizHref = `/${stateSlug}/${testSlug}/quiz`;
   const duration = formatMinutes(quiz?.duration_seconds);
   const toPass = quiz ? questionsToPass(quiz) : null;
@@ -80,7 +83,8 @@ export default function HeroSection({ testSlug }: { testSlug: string }) {
                     {selectedState}
                     <HandUnderline />
                   </span>{" "}
-                  DMV {isDrivingTest ? "Driving" : "Permit"} Practice Test 2026
+                  DMV {vehicleLabel}
+                  {isDrivingTest ? "Driving" : "Permit"} Practice Test 2026
                 </>
               )}
             </Heading>
